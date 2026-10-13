@@ -1,0 +1,37 @@
+id: "ISSUE-001"
+title: "Numpy save merge overwrites tombstones"
+qtype: "O"
+repo: "/mnt/windows_d/LMlib"
+base_commit: "e93a95cb8bd161c8f5baedc79ec8a2757835c2b1"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "fix"
+difficulty: "hard"
+effort_originally: "unknown - open issue at mining time"
+background: |
+  NumpyVectorStore buffers adds/deletes in memory and flushes via
+  save_vector_store with merge_existing=True, reloading disk state and
+  overlaying in-memory deltas under an interprocess lock.
+task: |
+  Reproduce the resurrection (A deletes X, B adds Y, B saves last; X must
+  stay deleted, Y present) in the worktree, then fix the numpy merge path
+  so tombstones are unioned not assigned, without losing B's adds. Keep
+  faiss path consistent. Provide repro script + test output.
+worktree: "/tmp/eval/ISSUE-001"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-001"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-001-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Open at mining HEAD e93a95c. No fix to leak; worktree pin is for
+  reproducibility. Grade with temp-dir two-store merge script.

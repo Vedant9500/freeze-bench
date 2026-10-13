@@ -1,0 +1,42 @@
+id: "ISSUE-002"
+title: "FTS AND-then-OR fallback with unclamped limits and hit-count-first fusion"
+qtype: "O"
+repo: "/mnt/windows_d/LMlib"
+base_commit: "e93a95cb8bd161c8f5baedc79ec8a2757835c2b1"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "research"
+difficulty: "hard"
+effort_originally: "unknown - open issue at mining time"
+background: |
+  At this commit, multi-word natural-language queries against the FTS index
+  usually miss on the first query form and fall back to a second form, while
+  retrieve_findings forwards caller-controlled k values through to both FTS
+  and vector search. Downstream fusion combines the two hit lists.
+task: |
+  In the worktree, quantify (a) how many FTS queries a typical multi-word
+  natural-language query executes and at what LIMIT, and (b) whether a weak
+  dual-hit (present in both lists) can outrank a strong single-hit purely on
+  hit-count. Propose a minimal fix (limit policy + fallback policy + fusion
+  ordering) with the latency/ranking tradeoff stated. Cite worktree
+  file:lines; provide a seeded-script repro using temp SQLite data only
+  (no model download).
+worktree: "/tmp/eval/ISSUE-002"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-002"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-002-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + result (query-count log + one ranking inversion case)"
+notes_for_owner: |
+  Open at mining HEAD e93a95c. No fix to leak; worktree pin is for
+  reproducibility. Grade with a small FTS fixture: count executed queries
+  per multi-word input and show one weak-dual-beats-strong-single case.

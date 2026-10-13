@@ -1,0 +1,38 @@
+id: "ISSUE-005"
+title: "Fail-closed corrupt index and backup restore integrity"
+qtype: "K"
+repo: "/mnt/windows_d/LMlib"
+base_commit: "ae740c737db0e59ebf5f64a1f4e1e05a839cb9cb"
+mined_date: "2026-10-09"
+fixed_date: "2026-08-23"
+mode: "research"
+difficulty: "hard"
+effort_originally: "days of security hardening"
+background: |
+  At this commit, loading a corrupt numpy vector index and restoring
+  backups copies files over live data. Describe the failure modes:
+  truncated index bytes, dimension mismatch, tampered backup bytes,
+  kill mid-restore.
+task: |
+  Fault-inject (temp dirs only): truncated npz, meta dim mismatch,
+  1-byte backup tamper, killed mid-restore. For each state whether the
+  code raises or recovers, name the exact raise site, and state whether
+  live data can be left mixed-generation. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-005"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-005"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-005-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + result (fault scripts, before/after)"
+notes_for_owner: |
+  Pre-fix perspective of fail-closed hardening. Model at ae740c7 sees the
+  vulnerable code; fix eba338d withheld. Grade with 4 fault scripts.

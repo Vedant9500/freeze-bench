@@ -1,0 +1,40 @@
+id: "ISSUE-022"
+title: "Secret-bearing commands outside the known-pattern corpus are stored verbatim"
+qtype: "O"
+repo: "/mnt/data/DOWSE"
+base_commit: "3543df83875f9941f3be20f56348117741596ba9"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "fix"
+difficulty: "easy"
+effort_originally: "open - corpus gap at mining time"
+background: |
+  Commands are scrubbed by a fixed pattern list before storage, with
+  matches flagged. Secret-bearing commands outside that list are stored
+  verbatim and unflagged.
+task: |
+  Build a fixture table of secret-bearing commands showing scrubbed vs
+  verbatim passthrough at this commit. Fix coverage minimally: existing
+  scrubs unchanged, hosts stay visible, clean commands stay unflagged.
+  Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-022"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-022"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-022-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 7 in proposals/DOWSE-20261009.md (open, fix-mode,
+  tiny surface). Grade by fixture table at src/redact.rs: passthrough
+  at base, scrubbed after, host-visibility + clean-unflagged guards
+  green (existing cases :105-144). Penalize greedy patterns eating hosts
+  or flagging clean `@` URLs. Owner judges pattern minimality.

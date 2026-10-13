@@ -1,0 +1,41 @@
+id: "ISSUE-021"
+title: "Burst keystrokes interleave stale ghost tail with typed text"
+qtype: "K"
+repo: "/mnt/data/DOWSE"
+base_commit: "2c291d45b8493ade0edbe43be8b4e2cbbd0ca8fd"
+mined_date: "2026-10-09"
+fixed_date: "2026-09-29"
+mode: "research"
+difficulty: "medium"
+effort_originally: "hours - burst diagnosis plus pty burst proof"
+background: |
+  At this commit fast typing can render a corrupted line: the visible text
+  mixes freshly typed characters with a leftover ghost tail from the
+  previous suggestion.
+task: |
+  Reproduce the interleaving with a burst test (second keystroke inside
+  the fork-gate window after the first key's ghost painted). Show which
+  suggestion the ghost must re-rank to and what it shows instead.
+  Determine whether any time-based fork gate can coexist with the
+  per-redisplay correctness invariant, and state that invariant. Cite
+  worktree file:lines.
+worktree: "/tmp/eval/ISSUE-021"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-021"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-021-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 2 in proposals/DOWSE-20261009.md. Grade by pty burst
+  re-rank (new marker shown, no interleaving) at fixed vs stale tail at
+  base (builtin/ghostline_autosuggest.c gate sites). Penalize window
+  retunes (50/200ms) that keep the corruption.

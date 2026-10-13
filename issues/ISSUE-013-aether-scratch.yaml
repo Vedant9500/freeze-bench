@@ -1,0 +1,41 @@
+id: "ISSUE-013"
+title: "Tiled finalize scratch under-sized corrupts heap"
+qtype: "K"
+repo: "/mnt/data/projects/aether"
+base_commit: "d4bbf0a51648e4c8825e8f712088e616b5d92844"
+mined_date: "2026-10-10"
+fixed_date: "2026-08-15"
+mode: "research"
+difficulty: "hard"
+effort_originally: "hours-to-days of heap-corruption diagnosis on device (seam + anomalous hot-pixel counts)"
+background: |
+  The tiled stacker splits each frame into 512-row tiles with a 1-row
+  overlap and finalizes per tile through a native kernel using a
+  caller-provided scratch buffer. Middle tiles show a dim seam on the
+  overlap row and the bad-pixel map fires thousands of times on clean
+  input; tile 0 is unaffected.
+task: |
+  At this commit, why does the overlap row of tiles 1+ go dim while
+  tile 0 is unaffected, and why is the bad-pixel array dirty on clean
+  input? Locate the root cause with file:line citations. State which
+  tiles are affected and why tile 0 escapes.
+worktree: "/tmp/eval/ISSUE-013"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-013"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-013-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as AETHER-001 in proposals/Aether-20261010.md. Grade with the
+  scratch-capacity assert (rows*W per tile, TiledStack.kt:343-344 vs :466
+  at base). Must cite allocation site + writer width. Penalize warp-kernel
+  or detector-threshold blame without a size argument.

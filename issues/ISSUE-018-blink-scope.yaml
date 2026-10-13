@@ -1,0 +1,41 @@
+id: "ISSUE-018"
+title: "Scoped deep search walks wrong root and matches substrings"
+qtype: "K"
+repo: "/mnt/data/projects/blink"
+base_commit: "27353dd8bf6372d837506b8f5d76065dfff54514"
+mined_date: "2026-10-10"
+fixed_date: "2026-08-28"
+mode: "research"
+difficulty: "medium"
+effort_originally: "multi-file fix closing a P1 chain, 5 regression tests"
+background: |
+  Scoped file queries misbehave three ways: a missing absolute scope
+  starts a walk far above the intended location, a file query with an
+  extension also returns renamed variants, and weak substring deep hits
+  suppress the remaining jobs.
+task: |
+  At this commit, why does each of the three symptoms happen? Locate the
+  scope-resolution, name-matching, and job-suppression faults with
+  file:line citations. State which root gets walked, which names match,
+  and which jobs get cancelled.
+worktree: "/tmp/eval/ISSUE-018"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-018"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-018-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 4 in proposals/blink-20261010.md. Grade with the
+  tmp-dir scoped fixture (walk-root + exact-name + job-suppression
+  asserts: deep.rs scope resolution + glob.rs matching + deep.rs job
+  planning). Must cite all three sites. Penalize matching-only answers
+  that never name the walked root.

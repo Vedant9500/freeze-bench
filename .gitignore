@@ -1,0 +1,32 @@
+# OS / editor
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Python (repro scripts, grading helpers)
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# Eval runtime - worktrees live in /tmp/eval, never in repo
+/tmp/
+
+# Logs / temp
+*.log
+*.tmp
+*.bak
+
+# Opencode local state (if any)
+.opencode/
+
+# Private eval data - never commit (fix SHAs + answers)
+# Keep templates/READMEs tracked, ignore harvested content
+rubrics/ISSUE-*.yaml
+proposals/*.md
+!proposals/README.md

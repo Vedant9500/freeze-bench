@@ -1,0 +1,42 @@
+id: "ISSUE-032"
+title: "Burst completion waits on dropped result callbacks"
+qtype: "K"
+repo: "/mnt/data/projects/aether"
+base_commit: "5fcba36b26d7e529dfdf29d2ee8f0508ac341bf9"
+mined_date: "2026-10-10"
+fixed_date: "2026-08-14"
+mode: "research"
+difficulty: "hard"
+effort_originally: "unknown - device-quirk diagnosis via per-stage timing (tens of seconds wasted per run before fix)"
+background: |
+  Burst capture waits on two latches for completion. The first burst
+  after each camera open stalls the full wait budget twice per run
+  while all image buffers arrive on time; later bursts are fast, and
+  only the capture stages pin at the timeout.
+task: |
+  At this commit, which completion signal never arrives on the first
+  burst, and why does the wait order turn one missing signal into a
+  double full-budget stall? Cite the capture/wait lines. State what
+  should be waited on and why, using only signals observed present.
+worktree: "/tmp/eval/ISSUE-032"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-032"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-032-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 4 in proposals/Aether-20261010.md.
+  Known-answer latch-discipline item. Grade with a dropped-callback fake
+  session: must name the missing signal and the inverted wait order
+  (android/app/src/main/java/com/aether/probe/RawBurstCapture.kt:261 burst
+  request, :273-274 wait order at base). Penalize timeout-raising or retry
+  answers; require the metadata-consumer grace argument.

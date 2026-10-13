@@ -1,0 +1,42 @@
+id: "ISSUE-007"
+title: "Verification grounding is syntax-existence not semantic support"
+qtype: "O"
+repo: "/mnt/windows_d/LMlib"
+base_commit: "e93a95cb8bd161c8f5baedc79ec8a2757835c2b1"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "research"
+difficulty: "hard"
+effort_originally: "unknown - open tradeoff at mining time"
+background: |
+  At this commit, the co-scientist handoff gate resolves citations to URLs,
+  artifact records, or local paths before verification input is written.
+  URL reachability probing is off unless explicitly enabled, keeping default
+  runs hermetic and offline-safe.
+task: |
+  In the worktree (default offline settings), construct three
+  passing-but-unsupportive citations — a valid-syntax URL, an
+  existing-but-irrelevant artifact ID, an on-disk-but-contradicting file —
+  and show each resolves successfully. Then propose a block-vs-warn
+  calibration that preserves offline determinism while catching
+  well-formed fabrications, and state how coverage-count gaming should be
+  handled. Cite worktree file:lines; provide the repro script and outputs.
+worktree: "/tmp/eval/ISSUE-007"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-007"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-007-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + result (three resolving citations)"
+notes_for_owner: |
+  Open tradeoff at mining HEAD e93a95c. No fix to leak. Grade offline: all
+  three citations must resolve successfully under default settings. Reward
+  entailment proposals that keep default runs hermetic.

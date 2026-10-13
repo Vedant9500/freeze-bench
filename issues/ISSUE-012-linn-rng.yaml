@@ -1,0 +1,38 @@
+id: "ISSUE-012"
+title: "Game-seed RNG collapses to one stream"
+qtype: "K"
+repo: "/mnt/data/LiNN"
+base_commit: "707e46409b898532a6eb514a05503f04c4343a0a"
+mined_date: "2026-10-09"
+fixed_date: "2026-09-15"
+mode: "fix"
+difficulty: "medium"
+effort_originally: "days - 872-game dupe collapse, G1 restart"
+background: |
+  At this commit, large startpos self-play batches collapse to a few
+  distinct games despite per-game seeds, temperature, and book settings.
+  Sampling and search noise appear identical in every game.
+task: |
+  Explain why small nearby seeds yield the same stream, locate the
+  constructor responsible, and fix it so distinct seeds diverge while
+  identical seeds reproduce. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-012"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-012"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-012-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as LINN-001 in proposals/LiNN-20261009.md. Grade: two-seed
+  divergence + same-seed reproducibility + cargo test policy green.
+  Penalize temperature/book retunes that miss the constructor clamp
+  (src/policy.rs at base).

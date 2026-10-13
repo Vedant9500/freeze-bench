@@ -1,0 +1,40 @@
+id: "ISSUE-027"
+title: "Quiescence pruning hides a mating sacrifice"
+qtype: "K"
+repo: "/mnt/data/lily"
+base_commit: "99e169509b3e726580119fd12026faf7f8684892"
+mined_date: "2026-10-09"
+fixed_date: "2026-09-12"
+mode: "research"
+difficulty: "medium"
+effort_originally: "days - ablation across five pruning sites"
+background: |
+  At this commit quiescence skips some captures based on a static
+  material-exchange estimate, while keeping move ordering tiers. The
+  curated avoidance suite contains a mating line whose refutation
+  requires seeing a material sacrifice. At 200k nodes the engine plays
+  the avoidance move there.
+task: |
+  Explain why the engine misses the mating line: locate the quiescence
+  skip site and the ordering-tier computation it reuses, and state which
+  move class gets skipped. Repro with the suite's mating row at 200k
+  nodes plus the 50k WAC count. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-027"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-027"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-027-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 2 in proposals/lily-20261009.md. Grade by skip-site
+  location plus material-vs-mate category argument plus suite flip at 200k
+  with WAC@50k held. Penalize threshold retunes or depth blame.

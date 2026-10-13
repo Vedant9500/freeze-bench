@@ -1,0 +1,41 @@
+id: "ISSUE-016"
+title: "Hardcoded IST shift with naive datetimes"
+qtype: "O"
+repo: "/mnt/windows_d/Youtube Recap"
+base_commit: "d727fd3b686fdf7b61faf7aa753e859cbeb1f096"
+mined_date: "2026-10-10"
+fixed_date: null
+mode: "research"
+difficulty: "easy"
+effort_originally: "unknown - open issue"
+background: |
+  At this commit JSON timestamps and HTML timestamps take different
+  paths into one naive datetime used for year, month, weekday, and
+  hour-of-day stats. The JSON path adjusts by a fixed zone offset.
+  The matchers drop sub-second and zone-suffix parts.
+task: |
+  Feed the same instant as JSON UTC (plain, millis, and offset
+  variants) and as locale HTML, and state the resulting year, hour
+  bin, and routine classification. Locate the truncation, dispatch,
+  and offset sites. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-016"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-016"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-016-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 4 in proposals/Youtube-Recap-20261010.md (open,
+  no single right constant). Grade by JSON-vs-HTML bin matrix +
+  millis/offset handling (youtube_time.py truncation/dispatch/offset).
+  Penalize changing the constant to own zone or replace(tzinfo) without
+  conversion. Owner judges zone-aware proposal qualitatively.

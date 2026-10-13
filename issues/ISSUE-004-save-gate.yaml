@@ -1,0 +1,42 @@
+id: "ISSUE-004"
+title: "Forgiving save-gate vs trusted_export bypass"
+qtype: "O"
+repo: "/mnt/windows_d/LMlib"
+base_commit: "e93a95cb8bd161c8f5baedc79ec8a2757835c2b1"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "research"
+difficulty: "hard"
+effort_originally: "unknown - open tradeoff at mining time"
+background: |
+  At this commit, low claim/evidence similarity saves with a warning and
+  lowered confidence instead of rejecting, and trusted exports (used by
+  collab/co-scientist flows) skip embedding, novelty, and contradiction
+  checks on the grounds the source was already reviewed.
+task: |
+  In the worktree, craft three seeded claim/evidence pairs (verbatim,
+  paraphrase, unrelated) plus one trusted_export smuggling case using a
+  stubbed embedder at fixed similarities. For each, state whether the code
+  rejects or saves-with-warning and with what confidence delta, and draw
+  the line between legitimate paraphrase variance and weak-support
+  injection without reintroducing a picky-wording rejection loop. Cite
+  worktree file:lines; provide the repro script and outputs.
+worktree: "/tmp/eval/ISSUE-004"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-004"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-004-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + result (reject vs ok-with-warning per case)"
+notes_for_owner: |
+  Open tradeoff at mining HEAD e93a95c. No fix to leak. Owner judges the
+  threshold line qualitatively; check the trust-boundary argument and that
+  the forgiving path is preserved, not re-hardened wholesale.

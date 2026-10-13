@@ -1,0 +1,50 @@
+# Public question template v2 — copy to `issues/ISSUE-XXX-slug.yaml`
+# Model under test reads ONLY this file (+ sanitized worktree). No answers here.
+# NEVER put fix SHAs, diffs, or post-fix file:lines in this file.
+
+id: "ISSUE-001"
+title: "Short descriptive title"
+qtype: "K  # K=known-answer (fix exists) | O=open-limitation | S=synthetic-reverted"
+repo: "/abs/path/to/source/repo  # original checkout (owner uses to build worktree)"
+
+# Freeze the world. K/S: parent of fix. O: HEAD at mining time (`git rev-parse HEAD`).
+base_commit: "FULL40HEX  # required. Never a branch name."
+mined_date: "YYYY-MM-DD"
+fixed_date: "YYYY-MM-DD  # K/S only; null for O"
+
+mode: "research  # research | fix"
+difficulty: "medium  # easy | medium | hard"
+effort_originally: "e.g. 2 days, link to issue if pre-fix"
+
+# What the model gets. For K/S: write from the PRE-FIX perspective.
+# No fix mechanism, no post-fix symbols, no commit hashes in text.
+background: |
+  1-3 sentences: repo context + symptom at base_commit.
+  Mention components, not the answer.
+
+task: |
+  Precise question or bug to fix AS OF base_commit.
+  Example: "At this commit, why does X fail when Y? Locate root cause, cite files/lines."
+
+# Owner fills after running scripts/make-worktree.sh. Model reads worktree only.
+worktree: "/tmp/eval/ISSUE-001  # set by make-worktree.sh; eval.md sets allowed_repo_root here"
+
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-001  # == worktree above"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true  # true for research, false for fix
+
+output_path: "~/freeze-bench/runs/ISSUE-001-model-YYYYMMDD.md"
+
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + result (required for K/S, else confidence + open questions)"
+
+notes_for_owner: |
+  Why good eval + what weak models get wrong. No answers.

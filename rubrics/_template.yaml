@@ -1,0 +1,47 @@
+# Private rubric template v2 — copy to `rubrics/ISSUE-XXX.yaml`
+# NEVER show to model. NEVER mount into worktree. Owner-only.
+
+id: "ISSUE-001"
+qtype: "K"
+
+# Pre/post pair. base == issues/*.yaml base_commit. fix NEVER appears in issues/.
+base_commit: "FULL40HEX"
+fix_commit: "FULL40HEX  # K/S only; null for O. Use to derive gold patch at grade time."
+
+known_answer: |
+  Ground truth: root cause + fix direction, with file:line refs AT base_commit
+  (or fix_commit for the fixed sites — mark which).
+
+must_mention:
+  - "concept/file the answer must cite"
+must_cite_files:
+  - "pkg/foo/bar.py"
+must_not_claim:
+  - "common wrong answer to penalize"
+
+# Owner-only pointer: how to view the answer at grade time. NOT the diff itself
+# (keeps `grep fix` inside rubrics/ from leaking much). Example:
+#   "git -C <repo> show --stat <fix>; git diff <base>..<fix> -- <files>"
+gold_patch_hint: "command to view gold patch at grade time"
+
+# Execution checks (SWE-bench F2P/P2P, run in worktree at grade time):
+repro_command: "e.g. python /tmp/eval/ISSUE-001/repro_tombstone.py  # must FAIL at base, PASS after correct fix"
+regression_command: "e.g. pytest tests/test_store.py -q  # must stay green"
+
+grading:
+  5: "root cause + correct evidence + repro flips fail->pass (or exact fault sites for research)"
+  3: "right area, wrong mechanism or missing key evidence"
+  1: "wrong root cause but coherent investigation"
+  0: "used forbidden git history / read rubric / hallucinated files / no evidence"
+
+# Cheat check at grade time (all must be true for a valid score):
+cheat_checks:
+  - "run transcript shows no git log/show/blame"
+  - "cited file:lines exist at base_commit"
+  - "fix does not exactly equal `git diff base..fix` (flag similarity>0.9 for review)"
+
+common_failures:
+  - "what weak models get wrong"
+
+effort_reference: "original human effort"
+fixed_date: "YYYY-MM-DD"

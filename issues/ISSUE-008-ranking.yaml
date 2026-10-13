@@ -1,0 +1,41 @@
+id: "ISSUE-008"
+title: "Ranking blend ignored by selection plus keyword safety"
+qtype: "O"
+repo: "/mnt/windows_d/LMlib"
+base_commit: "e93a95cb8bd161c8f5baedc79ec8a2757835c2b1"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "research"
+difficulty: "medium"
+effort_originally: "unknown - open tradeoff at mining time"
+background: |
+  At this commit, co-scientist generation computes packet scores, pairwise
+  comparison votes, similarity clusters, and safety notes, and the
+  verification handoff auto-picks top_k hypotheses for the next phase.
+task: |
+  In the worktree, using hand-built packets only (no DB needed), demonstrate
+  (a) one case where the pairwise comparison winner loses handoff selection,
+  with the exact sort key responsible, and (b) one safety-notes pair showing
+  over- or under-blocking by the keyword heuristic. Recommend whether the
+  handoff should use the blended or base score, how the dedup threshold and
+  tie-break should become deterministic, and how confidence-inflation gaming
+  should be priced. Cite worktree file:lines; provide the repro script.
+worktree: "/tmp/eval/ISSUE-008"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-008"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-008-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + result (selection order + safety scores)"
+notes_for_owner: |
+  Open tradeoff at mining HEAD e93a95c. No fix to leak. Grade by
+  reproducing the sort-key mismatch and the keyword safety pair. Owner
+  judges threshold recommendations qualitatively.

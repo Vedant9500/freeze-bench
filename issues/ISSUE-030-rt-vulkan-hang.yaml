@@ -1,0 +1,42 @@
+id: "ISSUE-030"
+title: "Big Vulkan renders hang past the fence"
+qtype: "K"
+repo: "/mnt/data/rt-approx"
+base_commit: "50a5ea3895ca9f3962865ba93462c2f43aa06cba"
+mined_date: "2026-10-09"
+fixed_date: "2026-10-07"
+mode: "research"
+difficulty: "medium"
+effort_originally: "hours - hang diagnosis + two-sided default/timeout fix"
+background: |
+  At this commit large Vulkan renders never return on laptop GPUs. The
+  render CLI leaves the dispatch count at the binary default and the host
+  waits on a short fence, so one command buffer holds minutes of work.
+task: |
+  Compute the wedged configuration from the code (tipping ray count,
+  submit hold time vs wait) and specify the minimal two-sided fix: caller
+  default by workload with override preserved, host wait tolerance with
+  small-scene output identical. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-030"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-030"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-030-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 4 in proposals/rt-approx-20261009.md.
+  Known-answer hang item. Grade by workload-threshold arithmetic (W*H*spp vs
+  threshold) plus fence reasoning plus small-scene output unchanged
+  (src/ab/render.py:33-39 CLI default, src/gpu/rt/rt_cornell_hdr.cpp:499-500
+  dispatch default, :127-133 host wait, :531 single submit at base). Weak
+  models raise only the fence or lower only the count and keep one side of
+  the hang.

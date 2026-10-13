@@ -1,0 +1,39 @@
+id: "ISSUE-028"
+title: "Verify-results clear bypasses serialized writes"
+qtype: "O"
+repo: "/mnt/windows_d/Password Manager"
+base_commit: "52c6ce84d6a294e2d36e953765f8da5dc09bfe03"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "fix"
+difficulty: "medium"
+effort_originally: "unknown - open issue at mining time"
+background: |
+  The durable verify-outcomes store serializes every read-modify-write
+  through a chain so interleaved saves cannot resurrect deletes. One
+  exported clear path removes the storage key directly without joining
+  the chain.
+task: |
+  Reproduce resurrection and loss via interleaved clear vs queued persist
+  orderings. Fix with minimal behavior-preserving change and prove no
+  fallback-semantics change. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-028"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-028"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-028-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 5 in proposals/PasswordManager-20261009.md. Grade by
+  ordered-interleaving fixture (load-clear-save resurrection plus
+  clear-load-save loss) with deferred storage mock; require existing tests
+  green. Owner judges minimality of chain fix.

@@ -1,0 +1,42 @@
+id: "ISSUE-031"
+title: "Error-spam hang with stuck cancel"
+qtype: "K"
+repo: "/mnt/data/projects/UD"
+base_commit: "961caa3cf424c3ccd525f7460b1e2250a5709225"
+mined_date: "2026-10-10"
+fixed_date: "2026-09-03"
+mode: "fix"
+difficulty: "medium"
+effort_originally: "days - AUD-005/006/017/018 batch Sep 2026"
+background: |
+  At this commit downloads run as a child process with captured output
+  pipes. On noisy sites the worker never finishes. Long merges block with
+  no visible state and ignore cancel. Cancelling at the wrong moment
+  leaves the row stuck instead of landing on cancelled or error.
+task: |
+  Reproduce the pipe-fill block with large error output, the deaf merge
+  wait, and the stuck-on-cancel row. Locate the process spawn, the single
+  blocking wait, and the exception path that drops cancel.
+  Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-031"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-031"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-031-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 3 in proposals/UD-20261010.md.
+  Known-answer worker item. Grade by mocked pipe-fill + merge-cancel +
+  kill-race fixtures (hang vs drain, stuck vs cancelled, zombie vs reaped):
+  spawn with piped error (ud/downloader.py:148-155 at base), single wait
+  (:176 at base), exception path (:182-184 at base). Weak models null the
+  pipes only or catch the wait without reaping and leave zombies plus litter.

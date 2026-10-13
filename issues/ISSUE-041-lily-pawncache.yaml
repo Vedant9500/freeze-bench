@@ -1,0 +1,44 @@
+id: "ISSUE-041"
+title: "Pawn-structure cache serves stale scores across king positions"
+qtype: "K"
+repo: "/mnt/data/lily"
+base_commit: "444944445e60a6e5b99b4191d02ccfa36f636e44"
+mined_date: "2026-10-09"
+fixed_date: "2026-09-22"
+mode: "research"
+difficulty: "hard"
+effort_originally: "days - correctness bug caught by endgame knob test"
+background: |
+  At this commit the classical eval caches pawn-structure subscores in a
+  small direct-mapped table keyed by pawn layout, returning the cached
+  triple on hits without recomputation. The same eval also carries
+  endgame passer terms that depend on where the kings stand. Two
+  positions can share an identical pawn layout while their kings stand
+  on different squares.
+task: |
+  At this commit, explain why back-to-back evals of same-pawns/different-kings
+  positions can return identical pawn subscores when they should differ.
+  Locate the cache key function and the pawn-structure entry point. Give a
+  minimal two-FEN repro (same pawns, kings on different squares, evaluated
+  under scoped nonzero king-sensitive weights) with before scores for each
+  FEN. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-041"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-041"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-041-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 1 in proposals/lily-20261009.md (lines 8-65). Grade by
+  key/payload mismatch diagnosis plus two-FEN repro flipping fail->pass.
+  Weak models blame the passer math or propose clearing/disabling the cache
+  everywhere instead of identifying the key-covers-less-than-payload bug.

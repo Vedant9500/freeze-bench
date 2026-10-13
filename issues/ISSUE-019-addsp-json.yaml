@@ -1,0 +1,41 @@
+id: "ISSUE-019"
+title: "Hand-rolled JSON parser is the single trust root for profiles and sidecars"
+qtype: "O"
+repo: "/mnt/data/projects/AD-DSP"
+base_commit: "2ec469164852a1dfb40d60f7c369885684b4a465"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "fix"
+difficulty: "medium"
+effort_originally: "unknown - open issue"
+background: |
+  At this commit all on-disk documents go through one small JSON module
+  with no external dependencies. It backs profiles, taste files, HRIR
+  sidecars, and PipeWire dump parsing.
+task: |
+  Locate the parser and serializer. Identify two input classes it
+  rejects that a lenient parser would accept, one input class where its
+  error position or message misleads, and where number or string
+  handling could surprise a profile author. Propose minimal hardening
+  preserving the strict contract. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-019"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-019"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-019-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 5 in proposals/AD-DSP-20261009.md (open). Grade by
+  strict-contract inventory (dup keys, trailing garbage, escapes, number
+  edge forms at crates/dsp/src/json.rs) + error quality. Penalize
+  "use serde_json" (violates std-only rule). Research acceptable; fix
+  must keep roundtrip tests green.

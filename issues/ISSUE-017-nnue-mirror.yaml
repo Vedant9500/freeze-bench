@@ -1,0 +1,39 @@
+id: "ISSUE-017"
+title: "Mirror-augment result mapping corrupts short results"
+qtype: "K"
+repo: "/mnt/data/NNUE"
+base_commit: "61131c27369c816839c8da11b78fff35c7620f2a"
+mined_date: "2026-10-10"
+fixed_date: "2026-09-14"
+mode: "fix"
+difficulty: "easy"
+effort_originally: "hours - clash loop triage, half-WDL corruption"
+background: |
+  At this commit the mirror-augment step doubles data via board mirror
+  with negated score and mirrored result. Its result helper accepts two
+  exact spellings and maps anything else to a draw, while one selfplay
+  writer emits shorter win/loss spellings.
+task: |
+  Locate the result helper. Reproduce with short win/loss spellings
+  (mirrors all become draws at base) and specify the full input set and
+  mapping the helper must implement, preserving canonical behavior.
+  Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-017"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-017"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-017-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 2 in proposals/NNUE-20261010.md. Grade by
+  short-spelling mirror correctness + canonical invariance
+  (training/aug.py helper + mirror write path).

@@ -1,0 +1,46 @@
+id: "ISSUE-035"
+title: "Compare harness races reloads and toggles, measures cache instead of modules"
+qtype: "K"
+repo: "/mnt/data/CLOE"
+base_commit: "e6d6699ade267138d7d461560563fe3cf0c2771a"
+mined_date: "2026-10-10"
+fixed_date: "2026-10-05"
+mode: "research"
+difficulty: "hard"
+effort_originally: "hours - stub-harness verified incl. failure retry"
+background: |
+  At this commit, the A/B compare detects reloads by polling tab status,
+  waits a fixed sleep after an async toggle, reloads through the HTTP
+  cache, and applies toggles without verifying applied state. Compare
+  numbers therefore mix cache hits, not-yet-applied toggles, and stale-tab
+  races.
+task: |
+  At this commit, demonstrate each race with stubbed browser APIs: (a) a
+  reload detector that resolves while the old document still reports its
+  status; (b) a fixed sleep after an asynchronously-applied toggle that has
+  not taken effect yet; (c) a reload that serves the HTTP cache; (d) two
+  rapid toggles where the last writer loses. Locate the responsible code on
+  both sides (popup + background) and state the synchronization rule each
+  case needs. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-035"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-035"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-035-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 3 in proposals/CLOE-20261010.md. Grade with the
+  4-assertion Node stub harness (ordering, ack, cache-bypass,
+  last-writer-wins: ext/popup.js reload detect + toggle sleep + plain
+  reload, ext/background.js unconditional apply). No browser needed.
+  Penalize longer-sleep-only answers that leave ordering and
+  last-writer-wins intact.

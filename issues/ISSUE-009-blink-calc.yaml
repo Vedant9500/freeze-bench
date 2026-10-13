@@ -1,0 +1,40 @@
+id: "ISSUE-009"
+title: "Calculator renders cards for non-finite inputs"
+qtype: "K"
+repo: "/mnt/data/projects/blink"
+base_commit: "d18507e2519453bd9569dbee439f9bc3fffcc3b5"
+mined_date: "2026-10-10"
+fixed_date: "2026-08-26"
+mode: "research"
+difficulty: "easy"
+effort_originally: "single-commit fix after audit batch (fuel-economy + interest + quantity parser)"
+background: |
+  The calculator turns typed text into numbers through a fraction-quantity
+  parser, a fuel-economy converter, and an interest-card path. Absurd typed
+  values still produce cards instead of being rejected.
+task: |
+  At this commit, which typed inputs slip through the quantity,
+  fuel-economy, and interest paths and render as cards, and where is the
+  missing validation in each path? Locate the root cause with file:line
+  citations. State for each path what input class escapes and why the
+  current guard does not catch it.
+worktree: "/tmp/eval/ISSUE-009"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-009"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-009-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + result (required: fail-before / pass-after)"
+notes_for_owner: |
+  Mined as BLINK-001 in proposals/blink-20261010.md. Grade with
+  quantity/fuel/interest asserts (no-card on absurd inputs). Must cite all
+  three guard sites (calc/util.rs, fueleco.rs, financial.rs). Penalize
+  display-reformatting answers that never name the escaping input classes.

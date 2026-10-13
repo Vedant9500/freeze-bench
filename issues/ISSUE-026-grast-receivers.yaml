@@ -1,0 +1,41 @@
+id: "ISSUE-026"
+title: "Chained receivers leak false-Exact, miss field/subscript links"
+qtype: "K"
+repo: "/mnt/data/grast"
+base_commit: "1527864088261d285b70f8879f2b2ded9690933f"
+mined_date: "2026-10-10"
+fixed_date: "2026-09-18"
+mode: "research"
+difficulty: "medium"
+effort_originally: "hours - field-test triage (false-Exact + false dead-code lead on same feature)"
+background: |
+  At this commit, a loop-variable counter call on table elements links
+  full-confidence onto an unrelated repo method, while genuine
+  parameter-field and subscript receivers link to nothing (one real
+  callee falsely reported dead).
+task: |
+  Reproduce all three behaviors on small fixtures (loop-var, field,
+  subscript): report per-fixture link confidence and the false dead-code
+  lead. Locate the receiver-handling code and state the rule separating
+  known-concrete receivers with no local match from unknown/generic
+  ones. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-026"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-026"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-026-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 1 in proposals/grast-20261010.md. Grade with the
+  3-fixture query script (confidence per fixture + dead-code lead
+  present/absent). Penalize widen-to-guess or narrow-to-nothing answers
+  that miss the concrete-vs-generic distinction.

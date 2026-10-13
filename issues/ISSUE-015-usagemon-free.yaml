@@ -1,0 +1,39 @@
+id: "ISSUE-015"
+title: "Free-variant sessions billed at paid rates and stored zero costs recomputed"
+qtype: "K"
+repo: "/mnt/windows_d/Usage monitor"
+base_commit: "d619601c09c7e9923c98392e4eb78948cf22b977"
+mined_date: "2026-10-10"
+fixed_date: "2026-09-25"
+mode: "research"
+difficulty: "easy"
+effort_originally: "1 day - pricing semantics fix"
+background: |
+  At this commit sessions on free-tier model variants show nonzero
+  spend while the external counter shows zero, and message rows with
+  explicitly stored zero costs come back with computed positive costs.
+  Name normalization strips variant suffixes onto paid base prices.
+task: |
+  Price a fixture with free-suffixed model names (plain and prefixed)
+  and message rows with explicit-zero versus missing costs: state the
+  resolved profile and row cost for each. Locate the name-normalization
+  and message-cost roots. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-015"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-015"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-015-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 2 in proposals/Usage-monitor-20261010.md. Grade by
+  free-name matrix (all zero) plus explicit-zero vs missing cost split
+  (src/collector.py normalization + trust branches).

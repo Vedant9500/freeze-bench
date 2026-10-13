@@ -1,0 +1,43 @@
+id: "ISSUE-023"
+title: "Elimination uses start-straight half width on variable-width track"
+qtype: "O"
+repo: "/mnt/data/projects/F1-AI"
+base_commit: "771e0b17f3d919c4ff06a0d8bceda23e36bee07c"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "fix"
+difficulty: "medium"
+effort_originally: "unknown - open issue at mining time"
+background: |
+  The training plant decides wall contact from a single half width taken
+  at the start straight, while the track model carries per-point widths
+  varying by over three meters. The sensor helper already resolves width
+  per position, but the rollout and its batched mirror do not use it for
+  the wall rule.
+task: |
+  Place cars at the same lateral offset on a wide section and a narrow
+  section and show the plant gives the same alive/dead verdict where the
+  survey says they must differ. Propose the minimal fix (which width
+  lookup the wall rule must use, fallback consistency) and the
+  corner-cut vs false-elimination tradeoff. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-023"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-023"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-023-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 3 in proposals/F1-AI-20261009.md (open). Grade by
+  wide-vs-narrow verdict-split fixture (f1_sim/train.py wall rule vs
+  sensors.py helper vs gpu_rollout.py mirror); require CPU and batched
+  paths to agree after. Penalize global bound widening or one-path-only
+  helper switches. Owner judges bound choice.

@@ -1,0 +1,39 @@
+id: "ISSUE-010"
+title: "Progress never advances"
+qtype: "K"
+repo: "/mnt/data/projects/UD"
+base_commit: "961caa3cf424c3ccd525f7460b1e2250a5709225"
+mined_date: "2026-10-10"
+fixed_date: "2026-09-03"
+mode: "fix"
+difficulty: "easy"
+effort_originally: "days - AUD-001 batch Sep 2026"
+background: |
+  At this commit starting any download shows a queue row that never
+  leaves its initial percent. The worker runs with a progress template
+  that prefixes each line, while the reader only accepts lines starting
+  with a bare marker. The bar stays frozen even as bytes land on disk.
+task: |
+  Explain why percent stays at zero for all downloads. Feed synthetic
+  progress lines in both emitted shapes and state what percent, speed,
+  eta, and size the reader returns for each. Locate the template site
+  and the reader guard. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-010"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-010"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-010-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as ISSUE-107 in proposals/UD-20261010.md. Grade by synthetic-line
+  matrix (prefixed vs bare, malformed fields) plus template/reader
+  citation (ud/downloader.py:136 template, :162 guard at base).

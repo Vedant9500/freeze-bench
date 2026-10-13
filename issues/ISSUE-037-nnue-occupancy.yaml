@@ -1,0 +1,44 @@
+id: "ISSUE-037"
+title: "Board vs accumulator occupancy diverge on victimless diagonal pawn push"
+qtype: "K"
+repo: "/mnt/data/NNUE"
+base_commit: "9f20bee6658b510a570e11a5a7f8a11196dc086c"
+mined_date: "2026-10-10"
+fixed_date: "2026-09-13"
+mode: "fix"
+difficulty: "hard"
+effort_originally: "days - pre-B audit with differential fuzz"
+background: |
+  At this commit the board move-doer auto-detects en passant as a diagonal
+  pawn move to an empty square, and the incremental accumulator mirrors
+  that detection with its own capture accounting. On a diagonal pawn push
+  to empty where no victim sits beside the origin rank, the two sides
+  account occupancy differently and their occ counts desync.
+task: |
+  At this commit, locate the en-passant branches in the board applier and
+  the accumulator updater. Reproduce with a victimless diagonal pawn push:
+  show Board occ vs Acc occ diverging and the downstream output bucket
+  shifting. Specify the invariant the two sides must share so they can
+  never diverge. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-037"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-037"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-037-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 3 in proposals/NNUE-20261010.md. Known-answer
+  agreement fix. Grade by victimless-push occ parity (src/board.rs
+  en-passant branch vs src/accumulator.rs capture accounting) +
+  incremental==full + output-bucket agreement (src/features.rs). Penalize
+  one-side decrement patches or legality-only checks that leave the
+  construction-level disagreement.

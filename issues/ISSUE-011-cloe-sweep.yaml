@@ -1,0 +1,39 @@
+id: "ISSUE-011"
+title: "Hidden sweep deletes page scripts and styles"
+qtype: "K"
+repo: "/mnt/data/CLOE"
+base_commit: "f771f61343ad3f76e58202b95f26010c07d6af83"
+mined_date: "2026-10-10"
+fixed_date: "2026-10-04"
+mode: "research"
+difficulty: "easy"
+effort_originally: "hours - real-world black-screen report from compare run"
+background: |
+  At this commit, the opt-in DOM-strip module blanks script-heavy pages
+  when enabled. Its sweep removes non-rendered nodes, including elements
+  the browser itself keeps non-rendered (page scripts, styles, metadata).
+task: |
+  Reproduce on a fixture with functional in-body script/style/link/meta
+  plus hidden junk: report what gets removed. Locate the sweep code and
+  state the rule separating never-removable element kinds from candidates.
+  Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-011"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-011"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-011-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as CLOE-001 in proposals/CLOE-20261010.md. Grade with the in-body
+  script/style/link fixture (functional kept + junk removed). Must cite
+  ext/dom-strip.js sweep sites. Penalize denylist-widening without the
+  never-removable-element principle.

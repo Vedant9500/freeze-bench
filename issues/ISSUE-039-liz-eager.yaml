@@ -1,0 +1,45 @@
+id: "ISSUE-039"
+title: "Eager scan double-counts root-level files in stats"
+qtype: "K"
+repo: "/mnt/data/liz-tree"
+base_commit: "f56299c4ea479810e2854963cb221a2572d25db1"
+mined_date: "2026-10-09"
+fixed_date: "2026-09-25"
+mode: "fix"
+difficulty: "medium"
+effort_originally: "hours - found during arena rewrite; isolated counting slice inside large perf commit"
+background: |
+  At this commit the parallel eager scan aggregates the tree bottom-up and
+  then syncs the progress counters to the tree. On trees whose scan root
+  holds direct files, the reported file total disagrees with the tree's
+  own file count, while subdir-only trees agree.
+task: |
+  Locate the post-aggregation counter sync. Reproduce with a small tree
+  containing a root-level file (stats total exceeds tree count by exactly
+  the root-level count; subdir-only trees agree). Specify the minimal
+  sync change restoring equality without altering folder counting.
+  Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-039"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-039"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-039-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 1 in proposals/liz-tree-20261009.md (lines 6-60).
+  Grade by root-level-file repro (stats.files vs root.files, off by exactly
+  the root-level count) plus folder count unchanged; grade only the
+  stats-sync slice inside the large perf commit. Weak-model trap: rescaling
+  workers/batching or recounting subdirs keeps the off-by-N (extra sync term
+  looks like a deliberate correction; most ad-hoc tests omit root files).
+  Difficulty downgraded hard->medium per TRIAGE taxonomy: single sync-line
+  root, minutes-grade.

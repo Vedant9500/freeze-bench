@@ -1,0 +1,45 @@
+id: "ISSUE-033"
+title: "Worker/backend lost-update window with pop-before-commit queue"
+qtype: "O"
+repo: "/mnt/data/BAM"
+base_commit: "d64a0bfc06d5d600ef90bd2a8ef4ad2c7a8d9c99"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "research"
+difficulty: "hard"
+effort_originally: "unknown - open issue"
+background: |
+  At this commit rating persists immediately while audio analysis runs
+  later in a separate file-backed queue consumer. Both sides read the
+  same state file, modify it, and write it back. The queue is a plain
+  JSON list beside the state file.
+task: |
+  Locate the two write paths and the queue pop path. Explain which
+  interleaving drops a rating or an analysis upgrade, what a crash
+  between queue-pop and persist does, and what a transient download
+  failure does to that song's analysis. State the delivery guarantee
+  and the minimal fix. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-033"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-033"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-033-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 4 in proposals/BAM-20261009.md (open, no fix).
+  Open concurrency gap. Grade by two-writer interleaving + commit-point
+  (pop-before-work) + corrupt-queue + no-retry inventory: backend _persist
+  (backend/main.py:133-141) vs worker direct write (worker.py:149-153),
+  queue pop + save before work (:113-117), corrupt-queue silent drop
+  (:46-60), failure returns ok:False after pop with no requeue (:130-144).
+  No network during eval; stub decode/measure. Penalize thread-lock-only
+  fixes (useless across processes) and unconditional requeue (poison loop).

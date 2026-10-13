@@ -1,0 +1,41 @@
+id: "ISSUE-029"
+title: "Geometric prune protects wrong tail and mis-deletes duplicates"
+qtype: "K"
+repo: "/mnt/data/projects/PRISM"
+base_commit: "c8f734e3df65dea5d3281469c3e04acb06aa3e1c"
+mined_date: "2026-10-10"
+fixed_date: "2026-08-09"
+mode: "fix"
+difficulty: "medium"
+effort_originally: "days - hardening pass with regression tests"
+background: |
+  At this commit the geometric prune round selects a removable set per
+  target under an ascending-magnitude sort with per-target protection,
+  and deletes by target/source pair with a first-match row search.
+task: |
+  Locate both loops. Reproduce the wrong-tail survivors on distinct
+  magnitudes and the wrong-duplicate deletion on repeated sources, and
+  specify the removable slice plus the identity deletion must target.
+  Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-029"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-029"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-029-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 3 in proposals/PRISM-20261010.md.
+  Known-answer prune-correctness item. Grade by survivor-set identity on a
+  distinct-magnitude row plus duplicate-multiset identity on a repeated-source
+  row (src/pruning/structural.cpp removable loop ~:63-72 and deletion loop
+  ~:117-126 at base). Weak models flip the comparator or deduplicate inputs
+  and keep one of the two faults.

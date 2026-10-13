@@ -1,0 +1,41 @@
+id: "ISSUE-014"
+title: "Reset leaves .bak behind so deleted state resurrects on restart"
+qtype: "O"
+repo: "/mnt/data/BAM"
+base_commit: "d64a0bfc06d5d600ef90bd2a8ef4ad2c7a8d9c99"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "fix"
+difficulty: "easy"
+effort_originally: "unknown - open issue"
+background: |
+  At this commit the backend keeps a live engine plus on-disk snapshots.
+  A reset endpoint clears the in-memory collections and removes the
+  state file. The load path prefers surviving snapshots over booting
+  empty.
+task: |
+  Prove reset is not durable across a restart: seed liked songs, persist
+  so a backup exists, call reset, then exercise the load path as a fresh
+  boot would and state what the collection contains. Locate the reset,
+  save, and load paths and specify the minimal fix preserving the
+  crash-recovery guarantee. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-014"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-014"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-014-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 3 in proposals/BAM-20261009.md (open, no fix).
+  Grade by reset-vs-recover matrix: seed, persist twice, reset, fresh
+  _load (backend/main.py reset/save/load paths). Fix must keep the crash
+  fallback for non-reset paths — penalize unconditional .bak deletion.

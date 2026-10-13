@@ -1,0 +1,40 @@
+id: "ISSUE-024"
+title: "MAC accept root plus pre-pass self-branch"
+qtype: "K"
+repo: "/mnt/data/projects/FMMS"
+base_commit: "9ad4f3f104e27b4c3735a82c5f1a63bdf87c4004"
+mined_date: "2026-10-10"
+fixed_date: "2026-08-22"
+mode: "fix"
+difficulty: "medium"
+effort_originally: "days - tier-1 pipeline iteration, gate-caught bug"
+background: |
+  At this commit the acceptance test builds a distance before the angle
+  reject, and the monopole pre-pass skips the query slot with a branch
+  in the innermost leaf loop. Both costs repeat millions of times per step.
+task: |
+  Locate the acceptance predicate and the pre-pass leaf scan. Propose minimal
+  changes that avoid the root on angle-rejected pairs and move the self-check
+  out of the inner loops. State the exact correctness condition for the scan
+  when the query index lies outside the leaf range, and what end-to-end gate
+  must stay green. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-024"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-024"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: false
+output_path: "~/freeze-bench/runs/ISSUE-024-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 2 in proposals/FMMS-20261010.md. Grade by gate-held
+  speedup with out-of-range guard correctness (mac.rs accept + pre-pass scan
+  vs exit-gate integration). Penalize unguarded splits that pass exactness
+  tests but blow up the integration gate.

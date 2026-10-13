@@ -1,0 +1,44 @@
+id: "ISSUE-040"
+title: "Gallery thumb worker panic strands pending plus no retry"
+qtype: "K"
+repo: "/mnt/data/image-viewer"
+base_commit: "65050d7055a34c944b22a8c6199ebec9d1c679fb"
+mined_date: "2026-10-09"
+fixed_date: "2026-09-25"
+mode: "research"
+difficulty: "hard"
+effort_originally: "days - thumb hardening batch"
+background: |
+  At this commit gallery thumb workers fetch from a shared queue, check a
+  persistent cache, then run a cheap decode. Any panic outside the narrow
+  guarded region kills the worker thread. The item it was holding stays
+  marked in-flight forever.
+task: |
+  At this commit, show a hostile file that panics outside the guarded
+  decode region and leaves its entry stranded in-flight with permanently
+  reduced throughput. Show a transient failure (download finishing, edit
+  saving) that never re-queues. Show a test run that modifies the real
+  user settings location. Locate the worker body, the in-flight and
+  failed sets, and the settings path used by tests. Cite worktree
+  file:lines.
+worktree: "/tmp/eval/ISSUE-040"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-040"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-040-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 1 in proposals/image-viewer-20261009.md (lines 7-60).
+  Grade by panic-strand plus retry-heal plus config-isolation fixtures.
+  Weak-model trap: claims panics are handled because one inner decode call
+  is guarded and misses cache I/O panics, or retries everything and
+  re-decodes truly-broken files forever.

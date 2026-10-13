@@ -1,0 +1,40 @@
+id: "ISSUE-020"
+title: "Local-git fallback passes the login as a path filter"
+qtype: "O"
+repo: "/mnt/data/gitstat"
+base_commit: "29afd1d29f5df26a6d3d318f16dd19ecab886d54"
+mined_date: "2026-10-10"
+fixed_date: null
+mode: "research"
+difficulty: "medium"
+effort_originally: "unknown - open issue"
+background: |
+  At this commit, zeroed-count repos fall back to a cached bare clone and
+  a log-to-numstat parse. The log call carries the login as a trailing
+  token; the parser matches authors by substring and skips binary lines.
+task: |
+  Explain the trailing token's meaning to the log tool, give a history
+  that yields zero rows today, and give an author pair that over-matches.
+  Cite the log construction, match block, and line gate. Propose a minimal
+  correction preserving the passing parser tests.
+worktree: "/tmp/eval/ISSUE-020"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-020"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-020-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 5 in proposals/gitstat-20261010.md (open). Grade
+  with offline parser fixture + log-shape argument
+  (src/sync/local_git.rs:108-122 construction, :39-77 match/gate).
+  Penalize reading the format string as a filter while missing that the
+  positional narrows by path.

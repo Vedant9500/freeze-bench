@@ -1,0 +1,40 @@
+id: "ISSUE-003"
+title: "rebuild_vector_index full re-embed with lost-update window"
+qtype: "O"
+repo: "/mnt/windows_d/LMlib"
+base_commit: "e93a95cb8bd161c8f5baedc79ec8a2757835c2b1"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "research"
+difficulty: "hard"
+effort_originally: "unknown - open issue at mining time"
+background: |
+  At this commit, rebuild_vector_index reads every finding, embeds all texts
+  in one batch, backs up the existing index files, and overwrites the index
+  with merging disabled. It runs on its own connection and store.
+task: |
+  In the worktree, prove the lost update: insert one finding mid-rebuild
+  (e.g. via a monkeypatched encode step on a 5-row seeded library) and show
+  whether it survives in the rebuilt index. Propose a fix (incremental or
+  chunked rebuild, generation check, or locking) with the explicit tradeoff
+  (stall time vs memory vs correctness). Cite worktree file:lines; provide
+  the repro script and before/after index contents.
+worktree: "/tmp/eval/ISSUE-003"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-003"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-003-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Open at mining HEAD e93a95c. No fix to leak; worktree pin is for
+  reproducibility. Grade with monkeypatched encode inserting one row
+  mid-rebuild; check the merge-disabled save and the lock gap.

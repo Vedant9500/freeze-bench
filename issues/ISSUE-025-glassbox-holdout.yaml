@@ -1,0 +1,42 @@
+id: "ISSUE-025"
+title: "Residual second stage judges on data it was built from"
+qtype: "K"
+repo: "/mnt/windows_d/Glassbox"
+base_commit: "fbe2898406cde4e93ee2be2e114be12debee0b57"
+mined_date: "2026-10-09"
+fixed_date: "2026-09-09"
+mode: "research"
+difficulty: "medium"
+effort_originally: "days - benchmark-proven 179 to 187 EXACT"
+background: |
+  At this commit the estimator optionally fits a second symbolic stage on
+  the leftover residual of the first stage. Candidate generation and
+  refinement for that stage observe the full dataset, and acceptance
+  compares against a holdout overlapping the build data. A bloated
+  incumbent can keep its slot against a strictly better screened challenger.
+task: |
+  Prove the leak: a residual candidate shaped by holdout rows accepted on
+  holdout score, and a strictly better screened challenger losing to the
+  incumbent. Specify the minimal ordering fix (split relative to
+  generation/refinement/judgment) and acceptance rule, with predicted
+  benchmark direction. Cite worktree file:lines.
+worktree: "/tmp/eval/ISSUE-025"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-025"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-025-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Mined as Candidate 2 in proposals/Glassbox-20261009.md. Grade by
+  row-overlap instrumentation (generation vs judgment rows, disjoint after)
+  plus challenger-vs-incumbent acceptance. Penalize gating acceptance on
+  holdout while leaving generation on full data.

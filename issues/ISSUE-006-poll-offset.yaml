@@ -1,0 +1,42 @@
+id: "ISSUE-006"
+title: "Filtered poll_messages never advances offsets"
+qtype: "O"
+repo: "/mnt/windows_d/LMlib"
+base_commit: "e93a95cb8bd161c8f5baedc79ec8a2757835c2b1"
+mined_date: "2026-10-09"
+fixed_date: null
+mode: "research"
+difficulty: "hard"
+effort_originally: "unknown - open issue at mining time"
+background: |
+  At this commit, read_messages and poll_messages persist per-agent offsets
+  only for unfiltered reads. An agent that polls with a message-type filter
+  keeps seeing the same window, while other message types still trigger
+  wakeups.
+task: |
+  In the worktree, demonstrate the stuck offset with a seeded collab session
+  (e.g. task + artifact + result messages, then two filtered polls): show
+  the stored offset before/after and the redelivered messages. Propose a fix
+  (per-filter offsets, server-side visibility filtering, or explicit ack)
+  with the delivery-vs-context-efficiency tradeoff stated — in particular
+  what happens to skipped types under your proposal. Cite worktree
+  file:lines; provide the repro script and outputs.
+worktree: "/tmp/eval/ISSUE-006"
+constraints:
+  allowed_repo_root: "/tmp/eval/ISSUE-006"
+  forbidden_commands:
+    - "git log"
+    - "git show"
+    - "git diff HEAD"
+    - "git blame"
+  forbidden_paths: []
+  read_only: true
+output_path: "~/freeze-bench/runs/ISSUE-006-model-YYYYMMDD.md"
+expected_output:
+  - "Verdict/answer in 1-5 sentences"
+  - "Evidence list with file:line citations INSIDE worktree"
+  - "Repro command + before/after output"
+notes_for_owner: |
+  Open at mining HEAD e93a95c. No fix to leak. Grade with a temp collab DB:
+  offset file before/after filtered polls plus duplicate redelivery. Strong
+  answers name the skipped-type loss risk of naive advancing.
